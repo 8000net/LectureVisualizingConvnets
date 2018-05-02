@@ -1,2 +1,2 @@
-# LectureVisualizingConvnets
-Visualizing Convolutional Neural Networks
+# Visualizing Convolutional Neural Networks 
+todo: write README
