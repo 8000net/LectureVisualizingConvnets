@@ -25,6 +25,8 @@ import cv2
 import copy
 
 video_stream = cv2.VideoCapture(0)
+video_stream.set(3,224)
+video_stream.set(4,224)
 
 model = VGG16(weights='imagenet')
 
