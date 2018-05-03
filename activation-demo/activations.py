@@ -145,7 +145,6 @@ while(True):
         #plt.title(layer_name)
         #plt.grid(False)
         #plt.imshow(display_grid, aspect='auto', cmap='viridis')
-        print("Showing Image")
         cv2.imshow(layer_name, display_grid.astype(np.uint8))
         break
 
