@@ -1,11 +1,11 @@
-import sys
-if len(sys.argv) != 2:
-    print("Usage: python activations.py {layer_num}")
-    exit()
-LAYER_TO_VISUALIZE = int(sys.argv[1])
-if LAYER_TO_VISUALIZE <= 1 or LAYER_TO_VISUALIZE >= 15:
-    print("Layer number must be between 2 and 14, inclusive")
-    exit()
+# import sys
+# if len(sys.argv) != 2:
+#     print("Usage: python activations.py {layer_num}")
+#     exit()
+# LAYER_TO_VISUALIZE = int(sys.argv[1])
+# if LAYER_TO_VISUALIZE <= 1 or LAYER_TO_VISUALIZE >= 15:
+#     print("Layer number must be between 2 and 14, inclusive")
+#     exit()
 
 import keras
 #keras.__version__
@@ -40,8 +40,6 @@ video_stream.set(4,224)
 model = VGG16(weights='imagenet')
 
 
-DOWNSAMPLE_LEVEL = [0, 4, 4, 4, 2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1][LAYER_TO_VISUALIZE]
-IMAGES_PER_ROW =   [0, 8, 8, 8, 8, 16, 16, 16, 16, 16, 16, 16, 32, 32, 32, 32][LAYER_TO_VISUALIZE]
 
 # def load_image_as_array(url, size=(224, 224)):
 #     response = requests.get(url)
@@ -54,14 +52,37 @@ IMAGES_PER_ROW =   [0, 8, 8, 8, 8, 16, 16, 16, 16, 16, 16, 16, 32, 32, 32, 32][L
 # img_tensor = load_image_as_array(img_url)
 # print(img_tensor)
 
-# Extracts the outputs of the top 8 layers:
-layer_outputs = [layer.output for layer in model.layers[LAYER_TO_VISUALIZE-1:LAYER_TO_VISUALIZE+1]]
-# Creates a model that will return these outputs, given the model input:
-activation_model = models.Model(inputs=model.input, outputs=layer_outputs)
+
+
+LAYER_TO_VISUALIZE = 2
 
 while(True):
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('q'):
+        print("Key is Q")
+        exit()
+    if key == ord('w'):
+        print("Key is W")
+        LAYER_TO_VISUALIZE -= 1
+        cv2.destroyAllWindows()
+    if key == ord('e'):
+        print("Key is E")
+        LAYER_TO_VISUALIZE += 1
+        cv2.destroyAllWindows()
+    if LAYER_TO_VISUALIZE == 15:
+        LAYER_TO_VISUALIZE = 2
+    if LAYER_TO_VISUALIZE == 1:
+        LAYER_TO_VISUALIZE = 14
+
+    # Extracts the outputs of the top 8 layers:
+    layer_outputs = [layer.output for layer in model.layers[LAYER_TO_VISUALIZE-1:LAYER_TO_VISUALIZE+1]]
+    # Creates a model that will return these outputs, given the model input:
+    activation_model = models.Model(inputs=model.input, outputs=layer_outputs)
+
+    DOWNSAMPLE_LEVEL = [0, 4, 4, 4, 2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1][LAYER_TO_VISUALIZE]
+    IMAGES_PER_ROW =   [0, 8, 8, 8, 8, 16, 16, 16, 16, 16, 16, 16, 32, 32, 32, 32][LAYER_TO_VISUALIZE]
+
     ret, img_original = video_stream.read()
     img_original = cv2.resize(img_original, dsize=(224, 224), interpolation=cv2.INTER_CUBIC)
 
@@ -124,9 +145,11 @@ while(True):
         #plt.title(layer_name)
         #plt.grid(False)
         #plt.imshow(display_grid, aspect='auto', cmap='viridis')
+        print("Showing Image")
         cv2.imshow(layer_name, display_grid.astype(np.uint8))
         break
 
+exit()
 # The local path to our target image
 #img_url = 'https://raw.githubusercontent.com/8000net/LectureNotes/master/images/dallas_hall.jpg'
 # img = load_image_as_array(img_url, size=(224, 224))
