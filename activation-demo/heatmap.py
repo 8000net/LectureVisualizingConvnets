@@ -30,24 +30,28 @@ video_stream.set(4,224)
 
 model = VGG16(weights='imagenet')
 
-# def load_image_as_array(url, size=(224, 224)):
-#     response = requests.get(url)
-#     img = Image.open(BytesIO(response.content))
-#     img = img.resize(size)
-#     return np.array(img).astype(float)
-#
-# img_url = 'https://raw.githubusercontent.com/8000net/LectureNotes/master/images/dog.jpg'
-#
-# img_tensor = load_image_as_array(img_url)
-# print(img_tensor)
 
 while(True):
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
     ret, img_original = video_stream.read()
-    img_original = cv2.resize(img_original, dsize=(224, 224), interpolation=cv2.INTER_CUBIC)
 
-    img = img_original.astype(np.float64)
+    frame_down = cv2.resize(img_original, dsize=(224, 224), interpolation=cv2.INTER_CUBIC)
+
+    # increase contrast
+    img_yuv = cv2.cvtColor(frame_down, cv2.COLOR_BGR2YUV)
+    img_yuv[:,:,0] = cv2.equalizeHist(img_yuv[:,:,0])# equalize the histogram of the Y channel
+    frame_down = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)# convert the YUV image back to RGB format
+
+    # and then remove noise
+    frame_down = cv2.fastNlMeansDenoisingColored(frame_down,None,7,7,3,11)
+
+    img = frame_down.copy() # make a copy for numpy
+
+    img = image.img_to_array(img[:,:,::-1]) # convert to numpy
+
+
+    img_original = cv2.resize(img_original, dsize=(224, 224), interpolation=cv2.INTER_CUBIC)
 
     # We add a dimension to transform our array into a "batch"
     # of size (1, 224, 224, 3)
@@ -113,7 +117,3 @@ while(True):
     superimposed_img = heatmap * 0.4 + img
 
     cv2.imshow('frame', superimposed_img.astype(np.uint8))
-
-# The local path to our target image
-#img_url = 'https://raw.githubusercontent.com/8000net/LectureNotes/master/images/dallas_hall.jpg'
-# img = load_image_as_array(img_url, size=(224, 224))
