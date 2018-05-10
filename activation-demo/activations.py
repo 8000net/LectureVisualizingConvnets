@@ -1,12 +1,3 @@
-# import sys
-# if len(sys.argv) != 2:
-#     print("Usage: python activations.py {layer_num}")
-#     exit()
-# LAYER_TO_VISUALIZE = int(sys.argv[1])
-# if LAYER_TO_VISUALIZE <= 1 or LAYER_TO_VISUALIZE >= 15:
-#     print("Layer number must be between 2 and 14, inclusive")
-#     exit()
-
 import keras
 #keras.__version__
 
@@ -39,35 +30,17 @@ video_stream.set(4,224)
 
 model = VGG16(weights='imagenet')
 
-
-
-# def load_image_as_array(url, size=(224, 224)):
-#     response = requests.get(url)
-#     img = Image.open(BytesIO(response.content))
-#     img = img.resize(size)
-#     return np.array(img).astype(float)
-#
-# img_url = 'https://raw.githubusercontent.com/8000net/LectureNotes/master/images/dog.jpg'
-#
-# img_tensor = load_image_as_array(img_url)
-# print(img_tensor)
-
-
-
 LAYER_TO_VISUALIZE = 2
 
 while(True):
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
-        print("Key is Q")
         exit()
     if key == ord('w'):
-        print("Key is W")
         LAYER_TO_VISUALIZE -= 1
         cv2.destroyAllWindows()
     if key == ord('e'):
-        print("Key is E")
         LAYER_TO_VISUALIZE += 1
         cv2.destroyAllWindows()
     if LAYER_TO_VISUALIZE == 15:
@@ -107,8 +80,6 @@ while(True):
 
     images_per_row = IMAGES_PER_ROW
 
-    #layer_name = model.layers[2].name
-    #layer_activation = model.layers[2].output
     # Now let's display our feature maps
     for layer_name, layer_activation in zip(layer_names, activations):
         #print(layer_name, layer_activation.shape)
@@ -139,16 +110,7 @@ while(True):
                              row * size//DOWNSAMPLE_LEVEL : (row + 1) * size//DOWNSAMPLE_LEVEL] = channel_image
 
         # Display the grid
-        scale = 1. / size
-        #plt.figure(figsize=(scale * display_grid.shape[1],
-                            #scale * display_grid.shape[0]))
-        #plt.title(layer_name)
-        #plt.grid(False)
-        #plt.imshow(display_grid, aspect='auto', cmap='viridis')
         cv2.imshow(layer_name, display_grid.astype(np.uint8))
         break
 
 exit()
-# The local path to our target image
-#img_url = 'https://raw.githubusercontent.com/8000net/LectureNotes/master/images/dallas_hall.jpg'
-# img = load_image_as_array(img_url, size=(224, 224))
